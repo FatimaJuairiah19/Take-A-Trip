@@ -1,0 +1,131 @@
+<?php
+include('db_conn.php');
+
+if(!isset($_SESSION)) 
+    { 
+        session_start(); 
+    } 
+if(!isset($_SESSION['stuLogEmail'])){
+echo "<script>location.href='loginorsignup.php'</script>";	
+}
+else{
+	header("Pragma: no-cache");
+	header("Cache-Control: no-cache");
+	header("Expires: 0");
+	$stuEmail= $_SESSION['stuLogEmail'];
+	
+	
+if(isset($_POST['purchase'])){
+	
+	$order_id = $_POST['Order_ID'];
+	
+	$stuEmail= $_SESSION['stuLogEmail'];
+	$course_id= $_SESSION['course_id'];
+	$amount=$_POST['TXN_AMOUNT'];
+
+	$sql ="INSERT INTO courseorder(order_id, stu_email, course_id,amount) VALUES ('$order_id','$stuEmail', '$course_id','$amount')";
+
+	if($conn->query($sql)==TRUE){
+		echo json_encode("OK");
+		echo "Redirecting to My profile...";
+		echo"<script>setTimeout(()=>{
+			window.location.href='../Student/myCourse.php';
+		},1500);</script>";
+
+	}else{
+		echo json_encode("Failed");
+	}
+}
+
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="GENERATOR" content="Eversoft First Page">
+<meta name= "viewport" content="width=device-width,initial-scale=1.0">
+<title>CheckOut</title>
+
+<!-- Bootstrap CSS-->
+<link rel ="stylesheet" href="css/bootstrap.min.css">
+
+<!--Google Font-->
+
+<link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@700&display=swap" rel="stylesheet">
+
+<!--Custom CSS-->
+<link rel="stylesheet" href="css/style.css">
+
+</head>
+<body>
+	<div class="container mt-5">
+	<div class="row">
+	<div class="col-sm-6 offset-sm-3 jumbotron">
+	<h3 class="mb-5">Welcome to eLearn Payment</h3>
+		<form method="post">
+		
+		<div class="form-group row">
+		<label for="Order_ID" class="col-sm-4 col-form-label">Order ID</label>
+		<div class="col-sm-8">
+		<input id="Order_ID" class="form-control"
+		tabindex="1" size="20" name="Order_ID"autoComplete="off"
+	 value="<?php echo "ORDS".rand(10000,99999999)?>" readonly>
+	</div>
+	</div>
+	
+	<div class="form-group row">
+		<label for="CUST_ID" class="col-sm-4 col-form-label">Student Email</label>
+		<div class="col-sm-8">
+		<input id="CUST_ID" class="form-control"
+		tabindex="2" size="12" maxLength="12" name="CUST_ID"autoComplete="off"
+	 value="<?php if(isset($stuEmail)){echo $stuEmail;} ?>" readonly>
+	</div>
+	</div>
+	
+	
+	<div class="form-group row">
+		<label for="TXN_AMOUNT" class="col-sm-4 col-form-label">Amount</label>
+		<div class="col-sm-8">
+		<input title="TXN_AMOUNT" class="form-control"
+		tabindex="10" type="text" name="TXN_AMOUNT"
+	 value="<?php if(isset($_POST['id'])){echo $_POST['id'];} ?>" readonly>
+	</div>
+	</div>
+	
+	<div class="form-group row">
+		
+		<div class="col-sm-8">
+		<input id="INDUSTRY_TYPE_ID" class="form-control"
+		tabindex="4" type="hidden" maxLength="12" size="12" name="INDUSTRY_TYPE_ID"
+	autoComplete="off" value="Retail" readonly>
+	</div>
+	</div>
+	
+	<div class="form-group row">
+		
+		<div class="col-sm-8">
+		<input id="CHANNEL_ID" class="form-control"
+		tabindex="4" type="hidden" maxLength="12" size="12" name="CHANNEL_ID"
+	autoComplete="off" value="WEB" readonly>
+	</div>
+	</div>
+	
+	<div class="text-center">
+	<input value="Checkout" name="purchase" type="submit" class="btn btn-primary" onclick="">
+	<a href="./courses.php" class="btn btn-secondary">Cancel</a>
+	</div>
+	</form>
+	<small class="form-text text-muted">Note: Purchase The Course by Clicking Checkout Button </small>
+	</div>
+	</div>
+	
+	</div>
+	
+
+</body>
+</html>
+
+<?php }
+
+?>
